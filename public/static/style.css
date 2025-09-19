@@ -8,40 +8,49 @@
 }
 
 :root {
-    --primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-    --accent: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-    --success: linear-gradient(135deg, #81FBB8 0%, #28C76F 100%);
-    --warning: linear-gradient(135deg, #FFD93D 0%, #FF9500 100%);
-    --danger: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%);
-    --dark: #1a1a2e;
-    --light: #eee;
-    --glass: rgba(255, 255, 255, 0.1);
-    --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --shadow-medium: 0 15px 35px rgba(0, 0, 0, 0.15);
-    --shadow-heavy: 0 20px 40px rgba(0, 0, 0, 0.2);
+    /* Modern Color Palette - Inspired by macOS Big Sur & iOS */
+    --primary: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
+    --secondary: linear-gradient(135deg, #5856D6 0%, #AF52DE 100%);
+    --accent: linear-gradient(135deg, #32D74B 0%, #30D158 100%);
+    --success: linear-gradient(135deg, #30D158 0%, #32D74B 100%);
+    --warning: linear-gradient(135deg, #FF9F0A 0%, #FF6B00 100%);
+    --danger: linear-gradient(135deg, #FF3B30 0%, #FF2D55 100%);
+    --info: linear-gradient(135deg, #64D2FF 0%, #007AFF 100%);
+    
+    /* Neutral Tones */
+    --dark: #1C1C1E;
+    --light: #F2F2F7;
+    --glass: rgba(255, 255, 255, 0.12);
+    --glass-dark: rgba(0, 0, 0, 0.15);
+    
+    /* Enhanced Shadows */
+    --shadow-light: 0 4px 20px rgba(0, 0, 0, 0.08);
+    --shadow-medium: 0 8px 30px rgba(0, 0, 0, 0.12);
+    --shadow-heavy: 0 15px 40px rgba(0, 0, 0, 0.18);
+    --shadow-glow: 0 0 30px rgba(0, 122, 255, 0.3);
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f3460 50%, #533483 75%, #7209b7 100%);
     background-attachment: fixed;
     min-height: 100vh;
     overflow-x: hidden;
 }
 
-/* Glass Morphism Base */
+/* Enhanced Glass Morphism */
 .glass {
-    background: rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: var(--shadow-light);
+    background: rgba(255, 255, 255, 0.18);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: var(--shadow-medium);
 }
 
 .glass-dark {
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(25px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: var(--shadow-light);
 }
 
 /* Elegant Animations */
@@ -112,20 +121,23 @@ body {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-/* Button Styles */
+/* Enhanced Button Styles */
 .btn-elegant {
     background: var(--primary);
     border: none;
-    border-radius: 16px;
+    border-radius: 20px;
     color: white;
-    font-weight: 600;
-    padding: 14px 28px;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 700;
+    padding: 16px 32px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.8px;
     font-size: 14px;
+    box-shadow: var(--shadow-light);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .btn-elegant:before {
@@ -135,8 +147,8 @@ body {
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
 }
 
 .btn-elegant:hover:before {
@@ -144,31 +156,33 @@ body {
 }
 
 .btn-elegant:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: var(--shadow-glow), var(--shadow-heavy);
+    border-color: rgba(255, 255, 255, 0.4);
 }
 
 .btn-elegant:active {
-    transform: translateY(0);
+    transform: translateY(-2px) scale(1.01);
 }
 
-/* Dashboard Cards */
+/* Enhanced Dashboard Cards */
 .dashboard-card {
-    background: var(--glass);
-    backdrop-filter: blur(20px);
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(30px);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 24px;
+    border-radius: 28px;
     padding: 32px;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
     animation: fadeInScale 0.6s ease-out;
 }
 
 .dashboard-card:hover {
-    transform: translateY(-8px) scale(1.02);
-    box-shadow: var(--shadow-heavy);
-    border-color: rgba(255, 255, 255, 0.3);
+    transform: translateY(-12px) scale(1.03);
+    box-shadow: var(--shadow-glow), var(--shadow-heavy);
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.18);
 }
 
 .dashboard-card::before {
@@ -177,10 +191,11 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 3px;
-    background: var(--accent);
+    height: 4px;
+    background: var(--primary);
     transform: scaleX(0);
-    transition: transform 0.3s ease;
+    transition: transform 0.4s ease;
+    border-radius: 28px 28px 0 0;
 }
 
 .dashboard-card:hover::before {
@@ -275,38 +290,45 @@ body {
     animation: pulse 2s ease-in-out infinite;
 }
 
-/* Status Badges */
+/* Enhanced Status Badges */
 .status-badge {
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 8px 14px;
+    border-radius: 24px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.6px;
     position: relative;
     overflow: hidden;
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: var(--shadow-light);
 }
 
 .status-active {
-    background: var(--success);
+    background: linear-gradient(135deg, #30D158 0%, #32D74B 100%);
     color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
 }
 
 .status-inactive {
-    background: rgba(255, 255, 255, 0.2);
-    color: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(10px);
+    background: linear-gradient(135deg, rgba(142, 142, 147, 0.8) 0%, rgba(99, 99, 102, 0.8) 100%);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .category-badge {
-    background: var(--accent);
+    background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%);
     color: white;
-    padding: 4px 10px;
-    border-radius: 16px;
+    padding: 6px 12px;
+    border-radius: 20px;
     font-size: 11px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: 0.4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
 }
 
 /* Modal Styles */
@@ -392,18 +414,20 @@ body {
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
-/* Notifications */
+/* Enhanced Notifications */
 .notification {
-    border-radius: 16px;
-    padding: 16px 20px;
+    border-radius: 20px;
+    padding: 18px 24px;
     margin-bottom: 12px;
-    backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(30px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
     color: white;
-    font-weight: 500;
-    animation: slideInRight 0.4s ease;
+    font-weight: 600;
+    animation: slideInRight 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: var(--shadow-medium);
+    min-width: 300px;
 }
 
 .notification::before {
@@ -412,23 +436,35 @@ body {
     top: 0;
     left: 0;
     bottom: 0;
-    width: 4px;
+    width: 5px;
+    border-radius: 20px 0 0 20px;
 }
 
 .notification-success {
-    background: var(--success);
+    background: linear-gradient(135deg, rgba(48, 209, 88, 0.9) 0%, rgba(50, 215, 75, 0.9) 100%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .notification-success::before {
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #32D74B 0%, #30D158 100%);
 }
 
 .notification-error {
-    background: var(--danger);
+    background: linear-gradient(135deg, rgba(255, 59, 48, 0.9) 0%, rgba(255, 45, 85, 0.9) 100%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 .notification-error::before {
-    background: rgba(255, 255, 255, 0.3);
+    background: linear-gradient(135deg, #FF2D55 0%, #FF3B30 100%);
+}
+
+.notification-info {
+    background: linear-gradient(135deg, rgba(0, 122, 255, 0.9) 0%, rgba(100, 210, 255, 0.9) 100%);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.notification-info::before {
+    background: linear-gradient(135deg, #64D2FF 0%, #007AFF 100%);
 }
 
 /* Loading Spinner */
@@ -524,13 +560,13 @@ body {
                 var(--primary) border-box;
 }
 
-/* Custom Category Colors */
-.category-streaming { background: linear-gradient(135deg, #FF6B9D 0%, #C44569 100%); }
-.category-software { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
-.category-fitness { background: linear-gradient(135deg, #81FBB8 0%, #28C76F 100%); }
-.category-music { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
-.category-gaming { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
-.category-productivity { background: linear-gradient(135deg, #FFD93D 0%, #FF9500 100%); }
-.category-cloud { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
-.category-news { background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%); }
-.category-other { background: linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%); }
+/* Beautiful Category Colors - Modern & Vibrant */
+.category-streaming { background: linear-gradient(135deg, #FF2D92 0%, #FF6B6B 100%); }
+.category-software { background: linear-gradient(135deg, #007AFF 0%, #5856D6 100%); }
+.category-fitness { background: linear-gradient(135deg, #30D158 0%, #32D74B 100%); }
+.category-music { background: linear-gradient(135deg, #AF52DE 0%, #FF2D55 100%); }
+.category-gaming { background: linear-gradient(135deg, #5856D6 0%, #007AFF 100%); }
+.category-productivity { background: linear-gradient(135deg, #FF9F0A 0%, #FFCC02 100%); }
+.category-cloud { background: linear-gradient(135deg, #64D2FF 0%, #007AFF 100%); }
+.category-news { background: linear-gradient(135deg, #FF9F0A 0%, #FF6B00 100%); }
+.category-other { background: linear-gradient(135deg, #8E8E93 0%, #636366 100%); }

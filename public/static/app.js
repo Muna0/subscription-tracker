@@ -1049,6 +1049,153 @@ class PremiumSubscriptionTracker {
         }
     }
 
+    showBudgetSettings() {
+        const modal = document.getElementById('modal')
+        const content = document.getElementById('modal-content')
+
+        content.innerHTML = `
+            <div class="elegant-form">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-bold text-white">
+                        <i class="fas fa-cog mr-3"></i>
+                        Budget Settings
+                    </h2>
+                    <button type="button" onclick="app.hideModal()" 
+                            class="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <label class="form-label">
+                            <i class="fas fa-dollar-sign mr-2"></i>Monthly Budget Limit
+                        </label>
+                        <input type="number" id="monthlyBudgetInput" value="${this.budget.total_budget || 100}" 
+                               step="0.01" min="0" class="form-input" placeholder="Enter your monthly budget">
+                        <p class="text-white/60 text-sm mt-2">Set your total monthly subscription budget</p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-4">Category Budgets</h3>
+                        <div class="space-y-4">
+                            ${Object.entries({
+                                'Streaming': 30,
+                                'Software': 50,
+                                'Music': 15,
+                                'Gaming': 25,
+                                'Productivity': 20,
+                                'Other': 20
+                            }).map(([category, defaultBudget]) => {
+                                const currentBudget = this.budget.categories?.find(c => c.category === category)?.budget || defaultBudget
+                                return `
+                                    <div class="flex items-center space-x-4">
+                                        <div class="w-8 h-8 rounded-lg ${this.getCategoryClass(category)} flex items-center justify-center">
+                                            <i class="fas fa-${this.getCategoryIcon(category)} text-white text-sm"></i>
+                                        </div>
+                                        <div class="flex-1">
+                                            <label class="text-white font-medium">${category}</label>
+                                        </div>
+                                        <div class="w-24">
+                                            <input type="number" id="budget_${category}" value="${currentBudget}" 
+                                                   step="0.01" min="0" class="form-input text-sm py-2 px-3" placeholder="0.00">
+                                        </div>
+                                    </div>
+                                `
+                            }).join('')}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-8 flex justify-end space-x-4">
+                    <button type="button" onclick="app.hideModal()" 
+                            class="px-6 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-all">
+                        Cancel
+                    </button>
+                    <button onclick="app.saveBudgetSettings()" class="btn-elegant">
+                        <i class="fas fa-save mr-2"></i>Save Budget Settings
+                    </button>
+                </div>
+            </div>
+        `
+
+        modal.classList.remove('hidden')
+    }
+
+    async saveBudgetSettings() {
+        try {
+            const monthlyBudget = parseFloat(document.getElementById('monthlyBudgetInput').value)
+            
+            const categoryBudgets = {}
+            const categories = ['Streaming', 'Software', 'Music', 'Gaming', 'Productivity', 'Other']
+            
+            categories.forEach(category => {
+                const input = document.getElementById(`budget_${category}`)
+                if (input) {
+                    categoryBudgets[category] = parseFloat(input.value) || 0
+                }
+            })
+
+            const budgetData = {
+                monthly_budget: monthlyBudget,
+                category_budgets: categoryBudgets,
+                budget_alerts: this.userSettings.budget_alerts !== false,
+                renewal_notifications: this.userSettings.renewal_notifications !== false
+            }
+
+            await axios.put('/api/budget', budgetData)
+            
+            this.showNotification('Budget settings saved successfully! 💰', 'success')
+            this.hideModal()
+            await this.loadAllData()
+            this.render()
+            this.addAnimationDelays()
+        } catch (error) {
+            console.error('Error saving budget settings:', error)
+            this.showNotification('Error saving budget settings 😞', 'error')
+        }
+    }
+
+    async updateBudget() {
+        const monthlyBudget = parseFloat(document.getElementById('monthlyBudget').value)
+        
+        try {
+            await axios.put('/api/budget', { monthly_budget: monthlyBudget })
+            this.showNotification('Budget updated successfully! 💰', 'success')
+            await this.loadAllData()
+            this.render()
+        } catch (error) {
+            console.error('Error updating budget:', error)
+            this.showNotification('Error updating budget 😞', 'error')
+        }
+    }
+
+    async toggleBudgetAlerts() {
+        try {
+            const newValue = !this.userSettings.budget_alerts
+            await axios.put('/api/budget', { budget_alerts: newValue })
+            this.userSettings.budget_alerts = newValue
+            this.showNotification(`Budget alerts ${newValue ? 'enabled' : 'disabled'}! 🔔`, 'success')
+            this.render()
+        } catch (error) {
+            console.error('Error toggling budget alerts:', error)
+            this.showNotification('Error updating settings 😞', 'error')
+        }
+    }
+
+    async toggleRenewalNotifications() {
+        try {
+            const newValue = !this.userSettings.renewal_notifications
+            await axios.put('/api/budget', { renewal_notifications: newValue })
+            this.userSettings.renewal_notifications = newValue
+            this.showNotification(`Renewal notifications ${newValue ? 'enabled' : 'disabled'}! 🔔`, 'success')
+            this.render()
+        } catch (error) {
+            console.error('Error toggling renewal notifications:', error)
+            this.showNotification('Error updating settings 😞', 'error')
+        }
+    }
+
     showNotification(message, type = 'info') {
         const notifications = document.getElementById('notifications')
         const notification = document.createElement('div')
