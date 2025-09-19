@@ -6,10 +6,11 @@
 - **Features**: Add, edit, delete subscriptions; view monthly totals; categorize subscriptions; dashboard analytics
 
 ## URLs
-- **Production**: https://c52d0d93.subscription-tracker-bqw.pages.dev
+- **Production**: https://subscription-tracker-bqw.pages.dev
+- **Latest Deployment**: https://ebe5bcec.subscription-tracker-bqw.pages.dev
 - **Development**: https://3000-iap6d14t3ltqti088z527-6532622b.e2b.dev
 - **GitHub**: https://github.com/Muna0/subscription-tracker
-- **API Base**: https://c52d0d93.subscription-tracker-bqw.pages.dev/api
+- **API Base**: https://subscription-tracker-bqw.pages.dev/api
 
 ## Functional Entry Points
 
@@ -86,13 +87,16 @@ Summary {
 
 ### Currently Completed
 ✅ Full CRUD API for subscriptions  
-✅ Responsive frontend interface with modern UI  
-✅ Dashboard with spending analytics  
-✅ Category management system  
-✅ Form validation and error handling  
-✅ Modal-based editing interface  
-✅ Real-time notifications  
-✅ Mobile-responsive design  
+✅ **Elegant Glass Morphism UI** with sophisticated animations  
+✅ **Gradient backgrounds** and modern visual effects  
+✅ **Responsive dashboard** with spending analytics  
+✅ **Category management** with color-coded badges  
+✅ **Form validation** and error handling with elegant modals  
+✅ **Smooth animations** and hover effects throughout  
+✅ **Real-time notifications** with beautiful styling  
+✅ **Mobile-responsive design** optimized for all devices  
+✅ **Google Fonts integration** (Inter font family)  
+✅ **Advanced CSS animations** (fade, scale, float effects)  
 
 ### Features Not Yet Implemented
 ❌ D1 database integration (using in-memory storage)  
