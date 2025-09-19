@@ -317,7 +317,10 @@ app.get('/', (c) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Subscription Tracker</title>
+        <title>Subscription Tracker - Elegant Management</title>
+        <meta name="description" content="Elegantly track and manage your monthly subscriptions with style">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <script src="https://cdn.tailwindcss.com"></script>
         <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
         <link href="/static/style.css" rel="stylesheet">
@@ -326,19 +329,25 @@ app.get('/', (c) => {
             theme: {
               extend: {
                 colors: {
-                  primary: '#3B82F6',
-                  secondary: '#1E40AF'
+                  primary: '#667eea',
+                  secondary: '#764ba2'
+                },
+                fontFamily: {
+                  'elegant': ['Inter', 'system-ui', 'sans-serif']
                 }
               }
             }
           }
         </script>
     </head>
-    <body class="bg-gray-50">
+    <body>
         <div id="app">
-            <!-- Loading spinner -->
+            <!-- Elegant loading spinner -->
             <div class="min-h-screen flex items-center justify-center">
-                <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <div class="text-center">
+                    <div class="loading-spinner mx-auto mb-6"></div>
+                    <p class="text-white text-lg font-light">Loading your elegant dashboard...</p>
+                </div>
             </div>
         </div>
         

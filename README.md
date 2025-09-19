@@ -6,8 +6,10 @@
 - **Features**: Add, edit, delete subscriptions; view monthly totals; categorize subscriptions; dashboard analytics
 
 ## URLs
+- **Production**: https://c52d0d93.subscription-tracker-bqw.pages.dev
 - **Development**: https://3000-iap6d14t3ltqti088z527-6532622b.e2b.dev
-- **API Base**: https://3000-iap6d14t3ltqti088z527-6532622b.e2b.dev/api
+- **GitHub**: https://github.com/Muna0/subscription-tracker
+- **API Base**: https://c52d0d93.subscription-tracker-bqw.pages.dev/api
 
 ## Functional Entry Points
 
@@ -118,9 +120,11 @@ Summary {
 - **Deployment**: Cloudflare Pages (prepared)
 
 ## Deployment Status
-- **Platform**: Development (Sandbox)
-- **Status**: ✅ Active and Running
+- **Platform**: Cloudflare Pages (Production)
+- **Status**: ✅ Live and Deployed
+- **Production URL**: https://c52d0d93.subscription-tracker-bqw.pages.dev
 - **Last Updated**: 2025-09-19
+- **Database**: In-memory (data resets on deployment)
 
 ## Quick Start Commands
 ```bash
