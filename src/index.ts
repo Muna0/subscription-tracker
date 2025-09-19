@@ -15,7 +15,7 @@ app.use('/api/*', cors())
 // Serve static files
 app.use('/static/*', serveStatic({ root: './public' }))
 
-// In-memory storage for development (will be replaced with D1 in production)
+// In-memory storage for development fallback
 let subscriptions: any[] = [
   {
     id: 1,
@@ -47,14 +47,164 @@ let subscriptions: any[] = [
 
 let nextId = 3
 
+// Database helper functions
+async function getAllSubscriptions(db?: D1Database) {
+  if (!db) {
+    return subscriptions
+  }
+  
+  try {
+    const { results } = await db.prepare('SELECT * FROM subscriptions ORDER BY created_at DESC').all()
+    return results || []
+  } catch (error) {
+    console.error('Database error:', error)
+    return subscriptions // Fallback to in-memory
+  }
+}
+
+async function getSubscriptionById(id: number, db?: D1Database) {
+  if (!db) {
+    return subscriptions.find(s => s.id === id)
+  }
+  
+  try {
+    const result = await db.prepare('SELECT * FROM subscriptions WHERE id = ?').bind(id).first()
+    return result
+  } catch (error) {
+    console.error('Database error:', error)
+    return subscriptions.find(s => s.id === id)
+  }
+}
+
+async function createSubscription(data: any, db?: D1Database) {
+  if (!db) {
+    const subscription = {
+      id: nextId++,
+      ...data,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+    subscriptions.push(subscription)
+    return subscription
+  }
+  
+  try {
+    const result = await db.prepare(`
+      INSERT INTO subscriptions (name, description, cost, billing_cycle, billing_date, category, website_url, is_active)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(
+      data.name,
+      data.description || '',
+      data.cost,
+      data.billing_cycle || 'monthly',
+      data.billing_date,
+      data.category || 'Other',
+      data.website_url || '',
+      data.is_active !== false ? 1 : 0
+    ).run()
+    
+    return {
+      id: result.meta.last_row_id,
+      ...data,
+      is_active: data.is_active !== false,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+  } catch (error) {
+    console.error('Database error:', error)
+    // Fallback to in-memory
+    const subscription = {
+      id: nextId++,
+      ...data,
+      created_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    }
+    subscriptions.push(subscription)
+    return subscription
+  }
+}
+
+async function updateSubscription(id: number, data: any, db?: D1Database) {
+  if (!db) {
+    const index = subscriptions.findIndex(s => s.id === id)
+    if (index === -1) return null
+    
+    subscriptions[index] = {
+      ...subscriptions[index],
+      ...data,
+      id,
+      updated_at: new Date().toISOString()
+    }
+    return subscriptions[index]
+  }
+  
+  try {
+    await db.prepare(`
+      UPDATE subscriptions 
+      SET name = ?, description = ?, cost = ?, billing_cycle = ?, 
+          billing_date = ?, category = ?, website_url = ?, is_active = ?, updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?
+    `).bind(
+      data.name,
+      data.description || '',
+      data.cost,
+      data.billing_cycle || 'monthly',
+      data.billing_date,
+      data.category || 'Other',
+      data.website_url || '',
+      data.is_active !== false ? 1 : 0,
+      id
+    ).run()
+    
+    return await getSubscriptionById(id, db)
+  } catch (error) {
+    console.error('Database error:', error)
+    // Fallback to in-memory
+    const index = subscriptions.findIndex(s => s.id === id)
+    if (index === -1) return null
+    
+    subscriptions[index] = {
+      ...subscriptions[index],
+      ...data,
+      id,
+      updated_at: new Date().toISOString()
+    }
+    return subscriptions[index]
+  }
+}
+
+async function deleteSubscription(id: number, db?: D1Database) {
+  if (!db) {
+    const index = subscriptions.findIndex(s => s.id === id)
+    if (index === -1) return false
+    subscriptions.splice(index, 1)
+    return true
+  }
+  
+  try {
+    await db.prepare('DELETE FROM subscriptions WHERE id = ?').bind(id).run()
+    return true
+  } catch (error) {
+    console.error('Database error:', error)
+    // Fallback to in-memory
+    const index = subscriptions.findIndex(s => s.id === id)
+    if (index === -1) return false
+    subscriptions.splice(index, 1)
+    return true
+  }
+}
+
 // API Routes for subscription management
-app.get('/api/subscriptions', (c) => {
-  return c.json({ subscriptions })
+app.get('/api/subscriptions', async (c) => {
+  const { env } = c
+  const results = await getAllSubscriptions(env?.DB)
+  return c.json({ subscriptions: results })
 })
 
-app.get('/api/subscriptions/:id', (c) => {
+app.get('/api/subscriptions/:id', async (c) => {
+  const { env } = c
   const id = parseInt(c.req.param('id'))
-  const subscription = subscriptions.find(s => s.id === id)
+  const subscription = await getSubscriptionById(id, env?.DB)
   
   if (!subscription) {
     return c.json({ error: 'Subscription not found' }, 404)
@@ -64,10 +214,10 @@ app.get('/api/subscriptions/:id', (c) => {
 })
 
 app.post('/api/subscriptions', async (c) => {
+  const { env } = c
   const body = await c.req.json()
   
-  const subscription = {
-    id: nextId++,
+  const data = {
     name: body.name,
     description: body.description || '',
     cost: parseFloat(body.cost),
@@ -75,60 +225,68 @@ app.post('/api/subscriptions', async (c) => {
     billing_date: parseInt(body.billing_date),
     category: body.category || 'Other',
     website_url: body.website_url || '',
-    is_active: body.is_active !== false,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString()
+    is_active: body.is_active !== false
   }
   
-  subscriptions.push(subscription)
+  const subscription = await createSubscription(data, env?.DB)
   return c.json({ subscription }, 201)
 })
 
 app.put('/api/subscriptions/:id', async (c) => {
+  const { env } = c
   const id = parseInt(c.req.param('id'))
   const body = await c.req.json()
   
-  const index = subscriptions.findIndex(s => s.id === id)
-  if (index === -1) {
+  const data = {
+    name: body.name,
+    description: body.description || '',
+    cost: parseFloat(body.cost),
+    billing_cycle: body.billing_cycle || 'monthly',
+    billing_date: parseInt(body.billing_date),
+    category: body.category || 'Other',
+    website_url: body.website_url || '',
+    is_active: body.is_active !== false
+  }
+  
+  const subscription = await updateSubscription(id, data, env?.DB)
+  
+  if (!subscription) {
     return c.json({ error: 'Subscription not found' }, 404)
   }
   
-  subscriptions[index] = {
-    ...subscriptions[index],
-    ...body,
-    id,
-    updated_at: new Date().toISOString()
-  }
-  
-  return c.json({ subscription: subscriptions[index] })
+  return c.json({ subscription })
 })
 
-app.delete('/api/subscriptions/:id', (c) => {
+app.delete('/api/subscriptions/:id', async (c) => {
+  const { env } = c
   const id = parseInt(c.req.param('id'))
-  const index = subscriptions.findIndex(s => s.id === id)
   
-  if (index === -1) {
+  const success = await deleteSubscription(id, env?.DB)
+  
+  if (!success) {
     return c.json({ error: 'Subscription not found' }, 404)
   }
   
-  subscriptions.splice(index, 1)
   return c.json({ message: 'Subscription deleted successfully' })
 })
 
 // Get monthly summary
-app.get('/api/summary', (c) => {
-  const activeSubscriptions = subscriptions.filter(s => s.is_active)
+app.get('/api/summary', async (c) => {
+  const { env } = c
+  const allSubscriptions = await getAllSubscriptions(env?.DB)
+  const activeSubscriptions = allSubscriptions.filter((s: any) => s.is_active)
+  
   const totalMonthly = activeSubscriptions
-    .filter(s => s.billing_cycle === 'monthly')
-    .reduce((sum, s) => sum + s.cost, 0)
+    .filter((s: any) => s.billing_cycle === 'monthly')
+    .reduce((sum: number, s: any) => sum + s.cost, 0)
   
   const totalYearly = activeSubscriptions
-    .filter(s => s.billing_cycle === 'yearly')
-    .reduce((sum, s) => sum + (s.cost / 12), 0) // Convert to monthly equivalent
+    .filter((s: any) => s.billing_cycle === 'yearly')
+    .reduce((sum: number, s: any) => sum + (s.cost / 12), 0) // Convert to monthly equivalent
   
   const totalMonthlyCost = totalMonthly + totalYearly
   
-  const categories = activeSubscriptions.reduce((acc, sub) => {
+  const categories = activeSubscriptions.reduce((acc: Record<string, number>, sub: any) => {
     acc[sub.category] = (acc[sub.category] || 0) + 
       (sub.billing_cycle === 'monthly' ? sub.cost : sub.cost / 12)
     return acc
@@ -137,7 +295,7 @@ app.get('/api/summary', (c) => {
   return c.json({
     total_monthly_cost: Math.round(totalMonthlyCost * 100) / 100,
     active_subscriptions: activeSubscriptions.length,
-    total_subscriptions: subscriptions.length,
+    total_subscriptions: allSubscriptions.length,
     categories
   })
 })
